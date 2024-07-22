@@ -62,6 +62,24 @@ def get_allPosts_string(publishTime: str):
     """
     return gql_tv_allPosts
 
+def get_Posts_string(publishTime: str):
+    gql_posts = f"""
+    query {{
+        items: posts(
+            where: {{ 
+                state: {{equals:"published"}}, publishedDate: {{gt:"{publishTime}"}} 
+            }}
+            orderBy: {{publishedDate : desc}}
+        ) {{
+            id
+            slug
+            title
+            publishedDate
+        }}
+    }}
+    """
+    return gql_posts
+
 sitemap_object_mapping = {
     'show': gql_allShows,
     'topic': gql_allTopics,

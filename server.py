@@ -103,12 +103,22 @@ def sitemap_generator():
     if object_name in objects:
         alias_object_name = 'story'
         time  = datetime.now(timezone)
-        lastmod = time.strftime("%Y-%m-%d")
+        # use ISO 8601 time format
+        lastmod = time.isoformat()
         previous_time = time - timedelta(hours=int(sitemap_news_days)*24)
-        publish_gt_time = previous_time.strftime("%Y-%m-%d")
+        publish_gt_time = previous_time.isoformat()
+        # lastmod = time.strftime("%Y-%m-%d")
+        # publish_gt_time = previous_time.strftime("%Y-%m-%d")
 
         # In news sitemap, practically you can only parse the posts within 2 days
-        gql_string = query.get_allPosts_string(publish_gt_time)
+        gql_string = ""
+        if app == 'mnews':
+            gql_string = query.get_allPosts_string(publish_gt_time)
+        else:
+            gql_string = query.get_Posts_string(publish_gt_time)
+        
+        print(gql_string)
+        
         gql_result = query.gql_fetch(gql_endpoint=gql_endpoint, gql_string=gql_string)
         xml_strings = generate_news_sitemaps(
                 rows = gql_result['items'],
@@ -161,3 +171,4 @@ def get_podcasts_from_mirrorvoice():
 
 if __name__ == "__main__":
     app.run()
+
